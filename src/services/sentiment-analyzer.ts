@@ -234,7 +234,7 @@ Format your response as a JSON object with the following structure:
 export async function generateMarketSentiment(): Promise<TokenSentiment[]> {
   try {
     // Fetch crypto data
-    const coins = await getCoins(50);
+    const coins = await getCoins(20);
     const news = await fetchNewsData();
     
     // Process each coin with GPT
