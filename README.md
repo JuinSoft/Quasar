@@ -72,7 +72,7 @@ Quasar follows a modern web application architecture with several key components
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/JuinSoft/Quasar
    cd quasar
    ```
 
@@ -207,22 +207,12 @@ Used for community sentiment analysis:
 
 ## 🔮 Future Roadmap
 
-1. **Q3 2023**: 
-   - Integration with more blockchain networks
-   - Enhanced AI capabilities with fine-tuned models
-   - Portfolio tracking and management
-
-2. **Q4 2023**: 
-   - Decentralized identity integration
-   - On-chain analytics dashboard
-   - AI-powered trading signals
-
-3. **Q1 2024**: 
+1. **Q3 2025**: 
    - Mobile application release
    - Advanced technical analysis tools
    - Community governance features
 
-4. **Q2 2024**: 
+4. **Q4 2025**: 
    - Multi-chain portfolio management
    - AI-powered DeFi strategy recommendations
    - Institutional-grade analytics
