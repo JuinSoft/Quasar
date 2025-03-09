@@ -53,11 +53,11 @@ async function fetchNewsData(): Promise<NewsItem[]> {
 function extractPriceData(coin: Coin): Partial<TokenSentiment> {
   const { name, code: symbol, rate: price, delta, volume, cap: marketCap } = coin;
   
-  // Extract price changes
-  const hourChange = delta.hour * 100;
-  const dayChange = delta.day * 100;
-  const weekChange = delta.week * 100;
-  const monthChange = delta.month * 100;
+  // Extract price changes - delta values are already in percentage format
+  const hourChange = delta.hour;
+  const dayChange = delta.day;
+  const weekChange = delta.week;
+  const monthChange = delta.month;
   
   return {
     name,

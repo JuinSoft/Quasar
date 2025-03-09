@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { FaExternalLinkAlt, FaArrowLeft, FaThumbsUp, FaThumbsDown, FaHandsHelping } from 'react-icons/fa';
@@ -19,7 +19,25 @@ interface SentimentAnalysis {
   }[];
 }
 
-export default function AnalyzePage() {
+// Loading component to show while suspense is resolving
+function LoadingAnalysis() {
+  return (
+    <div className="max-w-4xl mx-auto px-4 py-8">
+      <Link href="/news" className="flex items-center text-blue-400 hover:text-blue-300 mb-6 transition-colors">
+        <FaArrowLeft className="mr-2" /> Back to News
+      </Link>
+      <div className="glass rounded-xl p-8 shadow-xl mb-8">
+        <div className="flex flex-col items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+          <p className="text-gray-400">Loading analysis...</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// The actual page content that uses useSearchParams
+function AnalyzePageContent() {
   const searchParams = useSearchParams();
   const url = searchParams.get('url');
   const title = searchParams.get('title');
@@ -202,5 +220,14 @@ export default function AnalyzePage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+// Main page component with Suspense boundary
+export default function AnalyzePage() {
+  return (
+    <Suspense fallback={<LoadingAnalysis />}>
+      <AnalyzePageContent />
+    </Suspense>
   );
 } 

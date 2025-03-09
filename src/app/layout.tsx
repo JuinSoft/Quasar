@@ -5,6 +5,7 @@ import { WalletProvider } from "@/components/providers/WalletProvider";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Providers } from "@/components/providers/Providers";
+import FloatingChatbot from "@/components/FloatingChatbot";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,6 +41,7 @@ export default function RootLayout({
                 {children}
               </main>
               <Footer />
+              <FloatingChatbot />
             </div>
           </WalletProvider>
         </Providers>

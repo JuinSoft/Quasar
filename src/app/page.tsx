@@ -1,5 +1,6 @@
-import ChatInterface from "@/components/ChatInterface";
-import Image from "next/image";
+import SonicNews from "@/components/SonicNews";
+import SonicCoinInfo from "@/components/SonicCoinInfo";
+import RedditSentimentAnalysis from "@/components/RedditSentimentAnalysis";
 import Link from "next/link";
 import { FaRocket, FaNewspaper, FaChartLine, FaBitcoin } from "react-icons/fa";
 
@@ -42,10 +43,15 @@ export default function Home() {
       </section>
 
       <section className="w-full max-w-4xl mx-auto">
-        <div className="glass rounded-2xl p-8 shadow-xl">
-          <h2 className="text-2xl font-semibold mb-6 text-center gradient-text gradient-primary">Chat with Quasar AI</h2>
-          <ChatInterface />
-        </div>
+        <SonicCoinInfo />
+      </section>
+
+      <section className="w-full max-w-4xl mx-auto">
+        <RedditSentimentAnalysis />
+      </section>
+
+      <section className="w-full max-w-4xl mx-auto">
+        <SonicNews />
       </section>
 
       <section className="w-full max-w-5xl mx-auto mt-8">
