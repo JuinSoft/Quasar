@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { FaExternalLinkAlt, FaArrowLeft, FaThumbsUp, FaThumbsDown, FaHandsHelping } from 'react-icons/fa';
 import Link from 'next/link';
+import axios from 'axios';
 
 interface SentimentAnalysis {
   sentiment: 'positive' | 'negative' | 'neutral';
@@ -37,53 +38,26 @@ export default function AnalyzePage() {
 
       try {
         setLoading(true);
-        // In a real app, this would call your API to analyze the article
-        // For demo purposes, we'll simulate a response after a delay
-        setTimeout(() => {
-          const mockAnalysis: SentimentAnalysis = {
-            sentiment: ['positive', 'negative', 'neutral'][Math.floor(Math.random() * 3)] as 'positive' | 'negative' | 'neutral',
-            score: Math.random(),
-            summary: "This article discusses recent developments in the cryptocurrency market, highlighting both opportunities and risks. It mentions regulatory changes and technological advancements that could impact various tokens.",
-            tokens: [
-              {
-                name: "Bitcoin (BTC)",
-                action: Math.random() > 0.5 ? 'buy' : (Math.random() > 0.5 ? 'sell' : 'hold'),
-                confidence: 0.7 + Math.random() * 0.3,
-                reason: "Strong institutional adoption and positive market sentiment"
-              },
-              {
-                name: "Ethereum (ETH)",
-                action: Math.random() > 0.5 ? 'buy' : (Math.random() > 0.5 ? 'sell' : 'hold'),
-                confidence: 0.7 + Math.random() * 0.3,
-                reason: "Upcoming protocol upgrades and growing DeFi ecosystem"
-              },
-              {
-                name: "Solana (SOL)",
-                action: Math.random() > 0.5 ? 'buy' : (Math.random() > 0.5 ? 'sell' : 'hold'),
-                confidence: 0.7 + Math.random() * 0.3,
-                reason: "Increasing developer activity and network performance improvements"
-              },
-              {
-                name: "Cardano (ADA)",
-                action: Math.random() > 0.5 ? 'buy' : (Math.random() > 0.5 ? 'sell' : 'hold'),
-                confidence: 0.7 + Math.random() * 0.3,
-                reason: "New partnerships and ecosystem growth"
-              }
-            ]
-          };
-          
-          setAnalysis(mockAnalysis);
-          setLoading(false);
-        }, 2000);
+        
+        // Fetch the article content (in a real app, you would do this server-side)
+        // For demo purposes, we'll just pass the URL and title to the API
+        const response = await axios.post('/api/sentiment-analysis', {
+          url,
+          title,
+          content: '' // In a real app, you would fetch and pass the content
+        });
+
+        setAnalysis(response.data);
+        setLoading(false);
       } catch (err) {
+        console.error('Error analyzing sentiment:', err);
         setError('Failed to analyze the article. Please try again later.');
-        console.error(err);
         setLoading(false);
       }
     }
 
     analyzeSentiment();
-  }, [url]);
+  }, [url, title]);
 
   const getSentimentColor = (sentiment: string) => {
     switch (sentiment) {

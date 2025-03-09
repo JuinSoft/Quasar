@@ -5,6 +5,7 @@ import { motion, Variants } from 'framer-motion';
 import { FaArrowUp, FaArrowDown, FaChartLine, FaThumbsUp, FaThumbsDown, FaHandsHelping } from 'react-icons/fa';
 import Image from 'next/image';
 import Link from 'next/link';
+import axios from 'axios';
 
 interface CryptoToken {
   name: string;
@@ -31,114 +32,20 @@ export default function MarketAnalysisPage() {
     async function fetchMarketData() {
       try {
         setLoading(true);
-        // In a real app, this would call your API to fetch market data
-        // For demo purposes, we'll simulate a response after a delay
-        setTimeout(() => {
-          const mockTokens: CryptoToken[] = [
-            {
-              name: 'Bitcoin',
-              symbol: 'BTC',
-              price: 45000 + Math.random() * 5000,
-              change24h: -2.5 + Math.random() * 5,
-              marketCap: 850000000000 + Math.random() * 50000000000,
-              volume24h: 25000000000 + Math.random() * 5000000000,
-              sentiment: 'positive',
-              action: 'buy',
-              confidence: 0.85,
-              analysis: 'Strong institutional adoption and positive market sentiment despite recent price volatility.'
-            },
-            {
-              name: 'Ethereum',
-              symbol: 'ETH',
-              price: 3000 + Math.random() * 500,
-              change24h: -1.5 + Math.random() * 4,
-              marketCap: 350000000000 + Math.random() * 20000000000,
-              volume24h: 15000000000 + Math.random() * 3000000000,
-              sentiment: 'positive',
-              action: 'buy',
-              confidence: 0.82,
-              analysis: 'Upcoming protocol upgrades and growing DeFi ecosystem provide strong fundamentals.'
-            },
-            {
-              name: 'Binance Coin',
-              symbol: 'BNB',
-              price: 400 + Math.random() * 50,
-              change24h: -3 + Math.random() * 6,
-              marketCap: 65000000000 + Math.random() * 5000000000,
-              volume24h: 2000000000 + Math.random() * 500000000,
-              sentiment: 'neutral',
-              action: 'hold',
-              confidence: 0.68,
-              analysis: 'Regulatory concerns balanced by strong ecosystem growth and token burn mechanism.'
-            },
-            {
-              name: 'Solana',
-              symbol: 'SOL',
-              price: 100 + Math.random() * 20,
-              change24h: -4 + Math.random() * 8,
-              marketCap: 35000000000 + Math.random() * 3000000000,
-              volume24h: 1500000000 + Math.random() * 300000000,
-              sentiment: 'positive',
-              action: 'buy',
-              confidence: 0.75,
-              analysis: 'Increasing developer activity and network performance improvements after recent outages.'
-            },
-            {
-              name: 'Cardano',
-              symbol: 'ADA',
-              price: 1.2 + Math.random() * 0.3,
-              change24h: -2 + Math.random() * 4,
-              marketCap: 40000000000 + Math.random() * 4000000000,
-              volume24h: 1000000000 + Math.random() * 200000000,
-              sentiment: 'neutral',
-              action: 'hold',
-              confidence: 0.62,
-              analysis: 'Slow but steady development progress with new partnerships announced.'
-            },
-            {
-              name: 'XRP',
-              symbol: 'XRP',
-              price: 0.7 + Math.random() * 0.2,
-              change24h: -3 + Math.random() * 6,
-              marketCap: 33000000000 + Math.random() * 3000000000,
-              volume24h: 1200000000 + Math.random() * 300000000,
-              sentiment: 'negative',
-              action: 'sell',
-              confidence: 0.71,
-              analysis: 'Ongoing legal challenges and regulatory uncertainty create significant headwinds.'
-            },
-            {
-              name: 'Polkadot',
-              symbol: 'DOT',
-              price: 20 + Math.random() * 5,
-              change24h: -2 + Math.random() * 4,
-              marketCap: 20000000000 + Math.random() * 2000000000,
-              volume24h: 800000000 + Math.random() * 200000000,
-              sentiment: 'positive',
-              action: 'buy',
-              confidence: 0.78,
-              analysis: 'Parachain auctions showing strong demand and ecosystem expansion.'
-            },
-            {
-              name: 'Dogecoin',
-              symbol: 'DOGE',
-              price: 0.15 + Math.random() * 0.05,
-              change24h: -5 + Math.random() * 10,
-              marketCap: 19000000000 + Math.random() * 2000000000,
-              volume24h: 900000000 + Math.random() * 300000000,
-              sentiment: 'negative',
-              action: 'sell',
-              confidence: 0.65,
-              analysis: 'High volatility and dependence on social media sentiment without strong fundamentals.'
-            }
-          ];
-          
-          setTokens(mockTokens);
-          setLoading(false);
-        }, 1500);
+        
+        // Fetch market analysis from our API
+        const response = await axios.get('/api/market-analysis');
+        
+        if (response.data && response.data.tokens) {
+          setTokens(response.data.tokens);
+        } else {
+          throw new Error('Invalid response format');
+        }
+        
+        setLoading(false);
       } catch (err) {
+        console.error('Error fetching market data:', err);
         setError('Failed to load market data. Please try again later.');
-        console.error(err);
         setLoading(false);
       }
     }

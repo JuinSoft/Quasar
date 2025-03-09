@@ -1,6 +1,6 @@
 export const env = {
   // OpenAI API Key
-  OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',
+  OPENAI_API_KEY: process.env.NEXT_PUBLIC_OPENAI_API_KEY || '',
   
   // WalletConnect Project ID
   WALLET_CONNECT_PROJECT_ID: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || '',
