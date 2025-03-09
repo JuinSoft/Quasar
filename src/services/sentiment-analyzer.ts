@@ -37,7 +37,9 @@ export interface TokenSentiment {
  */
 async function fetchNewsData(): Promise<NewsItem[]> {
   try {
-    const response = await axios.get('/api/news');
+    // Use absolute URL with origin to fix the invalid URL error
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
+    const response = await axios.get(`${baseUrl}/api/news`);
     return response.data;
   } catch (error) {
     console.error('Error fetching news data:', error);
@@ -148,6 +150,8 @@ async function analyzeWithGPT(
       marketContext = '\nSolana is known for its high throughput and low transaction costs, competing with Ethereum.\n';
     } else if (symbol === 'BNB') {
       marketContext = '\nBinance Coin is the native token of Binance, one of the largest cryptocurrency exchanges.\n';
+    } else if (symbol === 'S') {
+      marketContext = '\nSonic is the highest-performing EVM L1, combining speed, incentives, and world-class infrastructure, powering the next generation of DeFi applications. The chain provides 10,000 TPS and sub-second finality.The S token is Sonic\'s native token, used for paying transaction fees, staking, running validators, and participating in governance.\n';
     }
     
     // Create the prompt for GPT
@@ -230,7 +234,7 @@ Format your response as a JSON object with the following structure:
 export async function generateMarketSentiment(): Promise<TokenSentiment[]> {
   try {
     // Fetch crypto data
-    const coins = await getCoins(10);
+    const coins = await getCoins(50);
     const news = await fetchNewsData();
     
     // Process each coin with GPT

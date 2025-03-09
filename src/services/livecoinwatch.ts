@@ -60,7 +60,7 @@ export async function getCoins(limit = 50): Promise<Coin[]> {
         }
       }
     );
-    
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error('Error fetching coins:', error);
@@ -87,7 +87,7 @@ export async function getCoin(code: string): Promise<Coin | null> {
         }
       }
     );
-    
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error(`Error fetching coin ${code}:`, error);
@@ -117,7 +117,7 @@ export async function getExchanges(limit = 20): Promise<Exchange[]> {
         }
       }
     );
-    
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error('Error fetching exchanges:', error);

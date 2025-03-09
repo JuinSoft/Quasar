@@ -2,29 +2,38 @@
  * Utility for handling cryptocurrency icons using the cryptocurrency-icons package
  */
 import React from 'react';
+import Image from 'next/image';
 
 // Import default icon for fallback
 import defaultIcon from 'cryptocurrency-icons/svg/color/generic.svg';
 
+// Define a type for icon options
+type IconOptions = {
+  symbol: string;
+  type?: 'color' | 'black';
+  format?: 'svg' | 'png';
+};
+
 /**
- * Get cryptocurrency icon path
+ * Get cryptocurrency icon URL
  * @param {string} symbol - Cryptocurrency symbol (e.g., 'BTC', 'ETH')
  * @param {string} type - Icon type ('color' or 'black')
  * @param {string} format - Icon format ('svg' or 'png')
- * @returns {string} - Path to the cryptocurrency icon
+ * @returns {string} - URL to the cryptocurrency icon
  */
-export const getCryptoIconPath = (
-  symbol: string, 
-  type: 'color' | 'black' = 'color', 
-  format: 'svg' | 'png' = 'svg'
-): string => {
+export const getCryptoIconUrl = ({
+  symbol,
+  type = 'color',
+  format = 'svg'
+}: IconOptions): string => {
   if (!symbol) return defaultIcon;
   
   const normalizedSymbol = symbol.toLowerCase();
   
+  // Use a static path approach instead of dynamic require
   try {
-    // Dynamic import to get the icon
-    return require(`cryptocurrency-icons/${format}/${type}/${normalizedSymbol}.${format}`);
+    // This will be resolved at build time
+    return `/node_modules/cryptocurrency-icons/${format}/${type}/${normalizedSymbol}.${format}`;
   } catch (error) {
     // If icon not found, return default icon
     return defaultIcon;
@@ -37,13 +46,24 @@ export const getCryptoIconPath = (
  * @param {Object} props - Additional props for the img element
  * @returns {JSX.Element} - Image element with the cryptocurrency icon
  */
-export const CryptoIcon: React.FC<{ symbol: string; [key: string]: any }> = ({ symbol, ...props }) => {
-  const iconPath = getCryptoIconPath(symbol);
-  
+export const CryptoIcon: React.FC<{ symbol: string; width?: number; height?: number; [key: string]: any }> = ({ 
+  symbol, 
+  width = 24, 
+  height = 24, 
+  ...props 
+}) => {
+  // For the component, we'll use a simpler approach with public assets
+  // You'll need to copy the icons you need to the public folder
   return (
     <img 
-      src={iconPath} 
+      src={`/images/crypto/${symbol.toLowerCase()}.svg`}
       alt={`${symbol} icon`}
+      width={width}
+      height={height}
+      onError={(e) => {
+        // Fallback to default icon if the specific one isn't found
+        (e.target as HTMLImageElement).src = '/images/crypto/generic.svg';
+      }}
       {...props}
     />
   );

@@ -38,6 +38,8 @@ export async function GET() {
       return dateB.getTime() - dateA.getTime();
     });
 
+    console.log(sortedItems);
+
     // Return the sorted items
     return NextResponse.json(sortedItems);
   } catch (error) {
@@ -52,7 +54,7 @@ export async function GET() {
 async function fetchFeed(url: string, sourceName: string) {
   try {
     const feed = await parser.parseURL(url);
-    
+    console.log(feed);
     // Map the feed items to a consistent format and add the source name
     return feed.items.map(item => ({
       ...item,

@@ -1,15 +1,18 @@
 # Quasar - AI Crypto Analysis on Sonic Blockchain
 
-Quasar is an AI-powered dapp built on Sonic Blockchain that allows users to interact with an AI agent to analyze crypto markets and make informed decisions.
+![Quasar Logo](public/quasar-logo.png)
 
-## Features
+Quasar is an AI-powered decentralized application built on the Sonic Blockchain that enables users to interact with an advanced AI agent for comprehensive crypto market analysis and informed decision-making.
 
-- Connect to Sonic Blaze Testnet
-- Chat with an AI assistant for crypto market analysis
-- Get detailed insights and investment strategies
-- Built on Next.js with TypeScript and Tailwind CSS
+## 🌟 Features
 
-## Sonic Blockchain Details
+- **Sonic Blockchain Integration**: Seamlessly connect to Sonic Blaze Testnet
+- **AI-Powered Analysis**: Chat with a sophisticated AI assistant for real-time crypto market insights
+- **Market Intelligence**: Get detailed analysis on trends, price movements, and investment opportunities
+- **User-Friendly Interface**: Modern, responsive UI built with Next.js, TypeScript, and Tailwind CSS
+- **Secure Wallet Connection**: Easy wallet integration with RainbowKit
+
+## 🔗 Sonic Blockchain Details
 
 - **Network Name**: Sonic Blaze Testnet
 - **RPC URL**: https://rpc.blaze.soniclabs.com
@@ -18,11 +21,13 @@ Quasar is an AI-powered dapp built on Sonic Blockchain that allows users to inte
 - **Currency Symbol**: S
 - **Faucet**: https://testnet.soniclabs.com/account
 
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
 
 - Node.js 18+ and npm
+- MetaMask or any EVM-compatible wallet
+- OpenAI API key for AI functionality
 
 ### Installation
 
@@ -49,27 +54,58 @@ Quasar is an AI-powered dapp built on Sonic Blockchain that allows users to inte
 
 5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Usage
+## 📱 Usage
 
-1. Connect your wallet to the Sonic Blaze Testnet
+1. Connect your wallet to the Sonic Blaze Testnet using the "Connect Wallet" button
 2. If you need test tokens, visit the [Sonic Faucet](https://testnet.soniclabs.com/account)
-3. Ask the AI assistant questions about crypto markets, trends, or investment strategies
-4. Receive detailed analysis and insights to help make informed decisions
+3. Navigate to the chat interface and start asking questions about crypto markets, trends, or investment strategies
+4. The AI assistant will provide detailed analysis and insights to help you make informed decisions
+5. Explore additional features like market data visualization and portfolio analysis
 
-## Technologies Used
+## 🛠️ Technologies Used
 
-- Next.js
-- TypeScript
-- Tailwind CSS
-- Ethers.js
-- RainbowKit/wagmi
-- OpenAI API
+- **Frontend**: Next.js 15, React 19, TypeScript, Tailwind CSS 4
+- **Blockchain**: Ethers.js, RainbowKit/wagmi, Web3Modal
+- **AI**: OpenAI API
+- **Data**: Axios, RSS Parser, Cryptocurrency Icons
+- **Animation**: Framer Motion
 
-## License
+## 🧪 Development
+
+```bash
+# Run development server with Turbopack
+npm run dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm run start
+
+# Run linting
+npm run lint
+```
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Acknowledgements
+## 🙏 Acknowledgements
 
 - Sonic Blockchain for providing the EVM-compatible blockchain infrastructure
 - OpenAI for the AI capabilities
+- The open-source community for various libraries and tools used in this project
+
+## 📞 Contact
+
+For questions or support, please open an issue in the GitHub repository or contact the project maintainers.
