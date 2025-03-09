@@ -11,11 +11,16 @@
   "dependencies": {
     "@rainbow-me/rainbowkit": "^2.2.4",
     "@tanstack/react-query": "^5.67.2",
+    "axios": "^1.8.2",
+    "cryptocurrency-icons": "^0.18.1",
     "ethers": "^5.7.2",
+    "framer-motion": "^12.4.10",
     "next": "15.2.1",
     "openai": "^4.86.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-icons": "^5.5.0",
+    "rss-parser": "^3.13.0",
     "viem": "^2.23.8",
     "wagmi": "^2.14.12",
     "web3modal": "^1.9.12"
@@ -29,6 +34,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.2.1",
     "tailwindcss": "^4",
+    "tailwindcss-animate": "^1.0.7",
     "typescript": "^5"
   }
 }
