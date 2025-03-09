@@ -1,28 +1,25 @@
 'use client';
 
-import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit';
+import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import '@rainbow-me/rainbowkit/styles.css';
 import { ReactNode } from 'react';
-import { WagmiConfig, configureChains, createConfig } from 'wagmi';
-import { publicProvider } from 'wagmi/providers/public';
+import { WagmiProvider } from 'wagmi';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { http } from 'wagmi';
 import { sonicBlazeTestnet } from '@/config/chains';
 
-const { chains, publicClient } = configureChains(
-  [sonicBlazeTestnet],
-  [publicProvider()]
-);
+const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || 'quasar-sonic-blockchain-ai-dapp';
 
-const { connectors } = getDefaultWallets({
+const config = getDefaultConfig({
   appName: 'Quasar',
-  projectId: 'quasar-sonic-blockchain-ai-dapp',
-  chains,
+  projectId,
+  chains: [sonicBlazeTestnet],
+  transports: {
+    [sonicBlazeTestnet.id]: http('https://rpc.blaze.soniclabs.com'),
+  },
 });
 
-const wagmiConfig = createConfig({
-  autoConnect: true,
-  connectors,
-  publicClient,
-});
+const queryClient = new QueryClient();
 
 interface WalletProviderProps {
   children: ReactNode;
@@ -30,10 +27,12 @@ interface WalletProviderProps {
 
 export function WalletProvider({ children }: WalletProviderProps) {
   return (
-    <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider chains={chains}>
-        {children}
-      </RainbowKitProvider>
-    </WagmiConfig>
+    <WagmiProvider config={config}>
+      <QueryClientProvider client={queryClient}>
+        <RainbowKitProvider>
+          {children}
+        </RainbowKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
   );
 } 

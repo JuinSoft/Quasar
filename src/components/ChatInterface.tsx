@@ -2,6 +2,8 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { ChatMessage, getCryptoAnalysis } from '@/services/openai';
+import ErrorMessage from './ErrorMessage';
+import LoadingSpinner from './LoadingSpinner';
 
 export default function ChatInterface() {
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -12,6 +14,7 @@ export default function ChatInterface() {
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -26,6 +29,7 @@ export default function ChatInterface() {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
 
+    setError(null);
     const userMessage: ChatMessage = {
       role: 'user',
       content: input
@@ -48,16 +52,14 @@ export default function ChatInterface() {
       ]);
     } catch (error) {
       console.error('Error getting response:', error);
-      setMessages(prev => [
-        ...prev,
-        {
-          role: 'assistant',
-          content: 'Sorry, there was an error processing your request. Please try again.'
-        }
-      ]);
+      setError('Failed to get a response from the AI assistant. Please try again.');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleRetry = () => {
+    setError(null);
   };
 
   return (
@@ -81,13 +83,26 @@ export default function ChatInterface() {
             </div>
           </div>
         ))}
+        
         {isLoading && (
           <div className="flex justify-start">
             <div className="max-w-[80%] rounded-lg px-4 py-2 bg-gray-700 text-gray-100">
-              <p className="animate-pulse">Analyzing...</p>
+              <div className="flex items-center space-x-2">
+                <LoadingSpinner size="sm" text="" />
+                <p>Analyzing crypto markets...</p>
+              </div>
             </div>
           </div>
         )}
+        
+        {error && (
+          <ErrorMessage 
+            title="AI Assistant Error" 
+            message={error} 
+            onRetry={handleRetry} 
+          />
+        )}
+        
         <div ref={messagesEndRef} />
       </div>
 

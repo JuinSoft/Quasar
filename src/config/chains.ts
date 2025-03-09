@@ -1,9 +1,6 @@
-import { Chain } from 'wagmi';
-
-export const sonicBlazeTestnet: Chain = {
+export const sonicBlazeTestnet = {
   id: 57054,
   name: 'Sonic Blaze Testnet',
-  network: 'sonic-blaze-testnet',
   nativeCurrency: {
     name: 'Sonic',
     symbol: 'S',
@@ -24,6 +21,6 @@ export const sonicBlazeTestnet: Chain = {
     },
   },
   testnet: true,
-};
+} as const;
 
 export const FAUCET_URL = 'https://testnet.soniclabs.com/account'; 

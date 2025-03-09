@@ -14,20 +14,21 @@ export interface ChatMessage {
 
 export async function getCryptoAnalysis(messages: ChatMessage[]): Promise<string> {
   try {
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are a crypto market analysis expert. Provide detailed insights about cryptocurrency markets, trends, and investment strategies. Focus on providing factual information and balanced analysis.'
-        },
-        ...messages
-      ],
-      temperature: 0.7,
-      max_tokens: 1000,
+    const response = await fetch('/api/crypto-analysis', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ messages }),
     });
 
-    return response.choices[0]?.message?.content || 'No analysis available';
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to get crypto analysis');
+    }
+
+    const data = await response.json();
+    return data.content;
   } catch (error) {
     console.error('Error getting crypto analysis:', error);
     return 'Sorry, there was an error analyzing the crypto market. Please try again later.';
