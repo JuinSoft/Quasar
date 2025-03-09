@@ -1,7 +1,7 @@
 import ChatInterface from "@/components/ChatInterface";
 import Image from "next/image";
 import Link from "next/link";
-import { FaRocket, FaNewspaper, FaChartLine } from "react-icons/fa";
+import { FaRocket, FaNewspaper, FaChartLine, FaBitcoin } from "react-icons/fa";
 
 export default function Home() {
   return (
@@ -15,20 +15,29 @@ export default function Home() {
         </p>
         <div className="glass p-8 rounded-2xl mb-8 shadow-xl">
           <h2 className="text-2xl font-semibold mb-6 gradient-text gradient-secondary">How it works</h2>
-          <ol className="text-left space-y-5 text-gray-300">
-            <li className="flex items-start gap-3 slide-up" style={{ animationDelay: '100ms' }}>
-              <span className="bg-gradient-to-br from-blue-600 to-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-md">1</span>
-              <span>Connect your wallet to the Sonic Blaze Testnet</span>
-            </li>
-            <li className="flex items-start gap-3 slide-up" style={{ animationDelay: '200ms' }}>
-              <span className="bg-gradient-to-br from-blue-600 to-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-md">2</span>
-              <span>Ask the AI assistant about crypto markets, trends, or investment strategies</span>
-            </li>
-            <li className="flex items-start gap-3 slide-up" style={{ animationDelay: '300ms' }}>
-              <span className="bg-gradient-to-br from-blue-600 to-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-md">3</span>
-              <span>Get detailed analysis and insights to make informed decisions</span>
-            </li>
-          </ol>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+            <div>
+              <div className="bg-blue-900/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">1</span>
+              </div>
+              <h3 className="font-medium mb-2">Real-time Data</h3>
+              <p className="text-gray-400 text-sm">Fetches live cryptocurrency data from trusted sources</p>
+            </div>
+            <div>
+              <div className="bg-blue-900/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">2</span>
+              </div>
+              <h3 className="font-medium mb-2">News Analysis</h3>
+              <p className="text-gray-400 text-sm">Analyzes latest crypto news for sentiment and impact</p>
+            </div>
+            <div>
+              <div className="bg-blue-900/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">3</span>
+              </div>
+              <h3 className="font-medium mb-2">Smart Insights</h3>
+              <p className="text-gray-400 text-sm">Generates data-driven market insights and recommendations</p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -41,7 +50,15 @@ export default function Home() {
 
       <section className="w-full max-w-5xl mx-auto mt-8">
         <h2 className="text-2xl font-semibold mb-8 text-center gradient-text gradient-accent">Explore More Features</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <Link href="/live-crypto" className="card bg-gray-800/50 p-6 rounded-xl text-center hover:bg-gray-800/70 transition-all">
+            <div className="bg-green-600/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <FaBitcoin className="text-green-400" size={24} />
+            </div>
+            <h3 className="text-xl font-semibold mb-2">Live Crypto</h3>
+            <p className="text-gray-400 text-sm">Real-time crypto data with GPT-powered market predictions</p>
+          </Link>
+          
           <Link href="/news" className="card bg-gray-800/50 p-6 rounded-xl text-center hover:bg-gray-800/70 transition-all">
             <div className="bg-blue-600/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
               <FaNewspaper className="text-blue-400" size={24} />
@@ -59,8 +76,8 @@ export default function Home() {
           </Link>
           
           <a href="https://testnet.soniclabs.com/account" target="_blank" rel="noopener noreferrer" className="card bg-gray-800/50 p-6 rounded-xl text-center hover:bg-gray-800/70 transition-all">
-            <div className="bg-green-600/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <FaRocket className="text-green-400" size={24} />
+            <div className="bg-orange-600/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <FaRocket className="text-orange-400" size={24} />
             </div>
             <h3 className="text-xl font-semibold mb-2">Get Started</h3>
             <p className="text-gray-400 text-sm">Get test tokens and start exploring the Sonic Blockchain</p>

@@ -3,7 +3,7 @@
 import WalletConnect from './WalletConnect';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { FaHome, FaNewspaper, FaChartLine } from 'react-icons/fa';
+import { FaHome, FaNewspaper, FaChartLine, FaBitcoin } from 'react-icons/fa';
 
 export default function Header() {
   return (
@@ -25,6 +25,10 @@ export default function Header() {
           <Link href="/" className="flex items-center space-x-1 text-gray-300 hover:text-white transition-colors">
             <FaHome />
             <span>Home</span>
+          </Link>
+          <Link href="/live-crypto" className="flex items-center space-x-1 text-gray-300 hover:text-white transition-colors">
+            <FaBitcoin />
+            <span>Live Crypto</span>
           </Link>
           <Link href="/news" className="flex items-center space-x-1 text-gray-300 hover:text-white transition-colors">
             <FaNewspaper />

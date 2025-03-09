@@ -36,6 +36,9 @@ export default function Footer() {
               <Link href="/" className="text-gray-400 hover:text-white transition-colors text-sm">
                 Home
               </Link>
+              <Link href="/live-crypto" className="text-gray-400 hover:text-white transition-colors text-sm">
+                Live Crypto
+              </Link>
               <Link href="/news" className="text-gray-400 hover:text-white transition-colors text-sm">
                 Crypto News
               </Link>
