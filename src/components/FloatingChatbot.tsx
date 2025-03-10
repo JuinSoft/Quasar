@@ -38,7 +38,6 @@ export default function FloatingChatbot() {
     
     if (!inputValue.trim() || isLoading) return;
     
-    // Add user message
     const userMessage: Message = {
       id: Date.now().toString(),
       content: inputValue,
@@ -51,78 +50,28 @@ export default function FloatingChatbot() {
     setIsLoading(true);
     
     try {
-      // In a real implementation, this would call your backend API
-      // For now, we'll simulate the response
-      
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Default response
-      let botResponse = "I'm sorry, I don't have enough information to answer that question about Sonic blockchain.";
-      
-      // Sonic blockchain knowledge base
-      const userQuery = userMessage.content.toLowerCase();
-      
-      // General Sonic information
-      if (userQuery.includes('what is sonic') || userQuery.includes('sonic blockchain') || userQuery.includes('about sonic')) {
-        botResponse = "Sonic is the highest-performing EVM L1 blockchain, combining speed, incentives, and world-class infrastructure for DeFi. The chain provides 10,000 TPS and sub-second finality, making it ideal for high-performance applications.";
-      } 
-      // Performance and technical features
-      else if (userQuery.includes('performance') || userQuery.includes('tps') || userQuery.includes('transactions per second')) {
-        botResponse = "Sonic blockchain delivers exceptional performance with 10,000 Transactions per Second (TPS) and sub-second finality. It's EVM compatible and supports Solidity and Vyper programming languages.";
+      const response = await fetch('/api/chatbot', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: messages.concat(userMessage).map(msg => ({
+            role: msg.sender === 'user' ? 'user' : 'assistant',
+            content: msg.content
+          }))
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get response from chatbot');
       }
-      // Token information
-      else if (userQuery.includes('token') || userQuery.includes('s token') || userQuery.includes('native token')) {
-        botResponse = "The native token of Sonic is 'S', which is used for transaction fees, staking, running validators, and participating in governance. Users holding FTM can upgrade to S on a 1:1 basis.";
-      }
-      // Gateway information
-      else if (userQuery.includes('gateway') || userQuery.includes('bridge') || userQuery.includes('ethereum bridge')) {
-        botResponse = "The Sonic Gateway provides developers and users with seamless access to vast liquidity through a secure bridge connected to Ethereum. It features a unique fail-safe mechanism to ensure your assets are protected in all circumstances.";
-      }
-      // Incentive programs
-      else if (userQuery.includes('incentive') || userQuery.includes('rewards') || userQuery.includes('earn')) {
-        botResponse = "Sonic offers several incentive programs: 1) Fee Monetization - earn up to 90% of the fees your apps generate, 2) Innovator Fund - up to 200 million S to onboard apps and support new ventures, and 3) Airdrop - ~200 million S to incentivize users of both Opera and Sonic chain.";
-      }
-      // Fee monetization
-      else if (userQuery.includes('fee monetization') || userQuery.includes('app fees') || userQuery.includes('revenue')) {
-        botResponse = "Sonic's Fee Monetization program allows developers to earn up to 90% of the fees their apps generate, similar to an ad-revenue model. This creates a sustainable revenue stream for application developers on the platform.";
-      }
-      // Innovator fund
-      else if (userQuery.includes('innovator fund') || userQuery.includes('funding') || userQuery.includes('grants')) {
-        botResponse = "The Sonic Innovator Fund allocates up to 200 million S tokens to onboard applications to Sonic and support new ventures. This fund aims to accelerate ecosystem growth and innovation.";
-      }
-      // Airdrop
-      else if (userQuery.includes('airdrop') || userQuery.includes('free tokens') || userQuery.includes('distribution')) {
-        botResponse = "Sonic has allocated approximately 200 million S tokens for airdrops to incentivize users of both Opera and the Sonic chain. This is part of their strategy to grow the ecosystem and reward community participation.";
-      }
-      // EVM compatibility
-      else if (userQuery.includes('evm') || userQuery.includes('ethereum') || userQuery.includes('compatibility')) {
-        botResponse = "Sonic is fully EVM (Ethereum Virtual Machine) compatible, allowing developers to easily port their Ethereum applications to Sonic with minimal changes. It supports Solidity and Vyper programming languages.";
-      }
-      // Node deployment
-      else if (userQuery.includes('node') || userQuery.includes('validator') || userQuery.includes('archive node')) {
-        botResponse = "Sonic supports different types of node deployments, including Archive Nodes for data storage and Validator Nodes for network consensus. Running a validator node requires staking S tokens.";
-      }
-      // Staking
-      else if (userQuery.includes('staking') || userQuery.includes('stake') || userQuery.includes('validator')) {
-        botResponse = "You can stake S tokens on Sonic to participate in network security and earn rewards. Staking is used for running validators and participating in the Proof of Stake consensus mechanism.";
-      }
-      // Governance
-      else if (userQuery.includes('governance') || userQuery.includes('voting') || userQuery.includes('dao')) {
-        botResponse = "S token holders can participate in Sonic's governance, voting on proposals that affect the network's development and parameters. This gives the community direct input into the blockchain's future.";
-      }
-      // FTM conversion
-      else if (userQuery.includes('ftm') || userQuery.includes('fantom') || userQuery.includes('conversion') || userQuery.includes('upgrade')) {
-        botResponse = "Users holding FTM tokens can upgrade to S tokens on a 1:1 basis. This conversion mechanism allows Fantom users to easily transition to the Sonic ecosystem.";
-      }
-      // Basic greetings
-      else if (userQuery.includes('hello') || userQuery.includes('hi') || userQuery.includes('hey')) {
-        botResponse = "Hello! I'm your Sonic blockchain assistant. How can I help you learn about Sonic's features, token, or ecosystem today?";
-      }
+
+      const data = await response.json();
       
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: botResponse,
+        content: data.content,
         sender: 'bot',
         timestamp: new Date()
       };
