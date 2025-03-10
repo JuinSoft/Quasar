@@ -9,7 +9,7 @@ const ATTESTATION_ABI = [
 ];
 
 // Contract address on Sonic blockchain
-const ATTESTATION_CONTRACT_ADDRESS = "0x1234567890123456789012345678901234567890"; // Replace with actual deployed contract
+const ATTESTATION_CONTRACT_ADDRESS = "0xd19e2e41e3de50646b2ba9cf7c02c1c9a86b2652"; // Replace with actual deployed contract
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,6 +19,7 @@ export async function POST(req: NextRequest) {
     const name = formData.get('name') as string;
     const description = formData.get('description') as string;
     const address = formData.get('address') as string;
+    const walletAddress = formData.get('walletAddress') as string;
 
     if (!file || !name || !address) {
       return NextResponse.json(
@@ -50,42 +51,38 @@ export async function POST(req: NextRequest) {
       // Create a provider for the Sonic blockchain
       const provider = new ethers.providers.JsonRpcProvider(sonicBlazeTestnet.rpcUrls.default.http[0]);
       
-      // Create a wallet with a private key (in production, this would be a secure server wallet)
-      // For demo purposes, we'll use a hardcoded private key - NEVER do this in production
-      const privateKey = "0x0000000000000000000000000000000000000000000000000000000000000000"; // Replace with actual private key
-      const wallet = new ethers.Wallet(privateKey, provider);
+      // Check if we have a wallet address from the frontend
+      if (!walletAddress) {
+        throw new Error('No wallet address provided');
+      }
       
-      // Connect to the attestation contract
+      // For server-side operations, we need to use a provider-based approach
+      // In a production environment, you would use a secure method to get the signer
+      // This could be through a session-based authentication system or a secure API
+      
+      // For demo purposes, we'll use a read-only provider to query the contract
       const attestationContract = new ethers.Contract(
         ATTESTATION_CONTRACT_ADDRESS,
         ATTESTATION_ABI,
-        wallet
+        provider
       );
       
-      // Call the attestDocument function
-      const tx = await attestationContract.attestDocument(
-        documentHash,
-        name,
-        mockCID
-      );
-      
-      // Wait for the transaction to be mined
-      const receipt = await tx.wait();
-      
-      // Get the attestation ID from the transaction logs
-      // In a real implementation, you would parse the event logs to get the ID
-      const attestationId = Math.floor(Math.random() * 1000000); // Placeholder
-      
-      // Return the attestation details
+      // For actual transactions, the frontend should handle the signing process
+      // Here we'll return the data needed for the frontend to create the transaction
       return NextResponse.json({
         success: true,
-        attestationId,
         documentHash,
         encryptionKey,
         documentURI: mockCID,
         name,
         timestamp: new Date().toISOString(),
-        transactionHash: receipt.transactionHash,
+        contractAddress: ATTESTATION_CONTRACT_ADDRESS,
+        contractABI: ATTESTATION_ABI,
+        transactionData: {
+          method: 'attestDocument',
+          params: [documentHash, name, mockCID],
+          from: walletAddress
+        }
       });
     } catch (blockchainError) {
       console.error('Blockchain error:', blockchainError);
@@ -108,6 +105,69 @@ export async function POST(req: NextRequest) {
     console.error('Error in document attestation:', error);
     return NextResponse.json(
       { error: 'Failed to process document attestation' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    // Get the attestation ID from the query parameters
+    const url = new URL(req.url);
+    const attestationId = url.searchParams.get('id');
+    
+    if (!attestationId) {
+      return NextResponse.json(
+        { error: 'Missing attestation ID' },
+        { status: 400 }
+      );
+    }
+    
+    // Connect to the Sonic blockchain
+    const provider = new ethers.providers.JsonRpcProvider(sonicBlazeTestnet.rpcUrls.default.http[0]);
+    
+    // Connect to the attestation contract
+    const attestationContract = new ethers.Contract(
+      ATTESTATION_CONTRACT_ADDRESS,
+      ATTESTATION_ABI,
+      provider
+    );
+    
+    try {
+      // Call the getAttestation function
+      const attestation = await attestationContract.getAttestation(attestationId);
+      
+      // Return the attestation details
+      return NextResponse.json({
+        success: true,
+        attestation: {
+          attester: attestation[0],
+          documentHash: attestation[1],
+          documentName: attestation[2],
+          documentURI: attestation[3],
+          timestamp: new Date(attestation[4].toNumber() * 1000).toISOString(),
+        }
+      });
+    } catch (contractError) {
+      console.error('Contract error:', contractError);
+      
+      // For demo purposes, return a simulated response
+      return NextResponse.json({
+        success: true,
+        attestation: {
+          attester: '0x' + '0'.repeat(40),
+          documentHash: '0x' + '0'.repeat(64),
+          documentName: 'Sample Document',
+          documentURI: 'ipfs://QmSample',
+          timestamp: new Date().toISOString(),
+        },
+        simulatedMode: true,
+      });
+    }
+  } catch (error) {
+    console.error('Error retrieving attestation:', error);
+    return NextResponse.json(
+      { error: 'Failed to retrieve attestation' },
       { status: 500 }
     );
   }
