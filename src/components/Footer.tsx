@@ -60,7 +60,7 @@ export default function Footer() {
                 Block Explorer
               </Link>
               <Link 
-                href="https://testnet.soniclabs.comaccount" 
+                href="https://testnet.soniclabs.com/account" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-white transition-colors text-sm"

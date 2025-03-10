@@ -103,7 +103,7 @@ Quasar follows a modern web application architecture with several key components
 ## 📱 Usage
 
 1. **Connect Wallet**: Connect your wallet to the Sonic Blaze Testnet using the "Connect Wallet" button
-2. **Get Test Tokens**: If you need test tokens, visit the [Sonic Faucet](https://testnet.soniclabs.comaccount)
+2. **Get Test Tokens**: If you need test tokens, visit the [Sonic Faucet](https://testnet.soniclabs.com/account)
 3. **AI Assistant**: Use the floating chatbot in the bottom-right corner to ask questions about crypto markets, trends, or investment strategies
 4. **Live Crypto Data**: View real-time cryptocurrency prices, market caps, and percentage changes
 5. **Reddit Sentiment**: Analyze community sentiment from the r/0xSonic subreddit

@@ -58,7 +58,7 @@ export default function AboutPage() {
               </li>
               <li>
                 <Link 
-                  href="https://testnet.soniclabs.comaccount" 
+                  href="https://testnet.soniclabs.com/account" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-blue-400 hover:text-blue-300"

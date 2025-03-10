@@ -48,4 +48,4 @@ export const sonicMainnet = {
   testnet: false,
 } as const;
 
-export const FAUCET_URL = 'https://testnet.soniclabs.comaccount'; 
+export const FAUCET_URL = 'https://testnet.soniclabs.com/account'; 
