@@ -6,9 +6,16 @@ import { ethers } from 'ethers';
 import { contractTemplates } from '@/services/contracts/templates';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import ErrorMessage from '@/components/ErrorMessage';
-import { sonicBlazeTestnet } from '@/config/chains';
-import { FaCode, FaRocket, FaCheck, FaExclamationTriangle, FaRobot, FaFileContract } from 'react-icons/fa';
+import { sonicBlazeTestnet, sonicMainnet } from '@/config/chains';
+import { FaCode, FaRocket, FaCheck, FaExclamationTriangle, FaRobot, FaFileContract, FaNetworkWired } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+
+// Add TypeScript declaration for window property
+declare global {
+  interface Window {
+    autoCompileTimeout?: NodeJS.Timeout;
+  }
+}
 
 // Contract creation steps
 enum ContractStep {
@@ -34,7 +41,11 @@ export default function ContractsPage() {
   const [aiAssistantResponse, setAiAssistantResponse] = useState<string>('');
   const [isAiAssistantLoading, setIsAiAssistantLoading] = useState(false);
   const [compilationResult, setCompilationResult] = useState<{success: boolean; message: string} | null>(null);
+  const [selectedNetwork, setSelectedNetwork] = useState<'testnet' | 'mainnet'>('testnet');
   const editorRef = useRef<HTMLTextAreaElement>(null);
+
+  // Get the selected network configuration
+  const networkConfig = selectedNetwork === 'testnet' ? sonicBlazeTestnet : sonicMainnet;
 
   // Reset parameters when contract type changes
   useEffect(() => {
@@ -111,10 +122,15 @@ export default function ContractsPage() {
     }
   };
 
-  // Compile contract to check for errors
+  // Compile contract
   const compileContract = async () => {
+    if (!contractSource) {
+      setError('Please generate or enter a contract source');
+      return;
+    }
+
     setIsLoading(true);
-    setCompilationResult(null);
+    setError(null);
     
     try {
       const response = await fetch('/api/contracts/compile', {
@@ -127,21 +143,27 @@ export default function ContractsPage() {
         }),
       });
 
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.details || errorData.error || 'Compilation failed');
+      }
+
       const data = await response.json();
       
-      if (response.ok) {
-        setCompilationResult({
-          success: true,
-          message: 'Contract compiled successfully!'
-        });
-      } else {
-        setCompilationResult({
-          success: false,
-          message: data.details || data.error || 'Compilation failed. Please check your code.'
-        });
-      }
+      // Set compilation result
+      setCompilationResult({
+        success: true,
+        message: 'Compilation successful! Contract is ready to deploy.'
+      });
+      
+      // If we're editing a template in the live editor, automatically proceed to deployment
+      // after a short delay to allow the user to see the success message
+      setTimeout(() => {
+        setStep(ContractStep.DEPLOY);
+      }, 1500);
+      
     } catch (err) {
-      console.error('Error compiling contract:', err);
+      console.error('Compilation error:', err);
       setCompilationResult({
         success: false,
         message: err instanceof Error ? err.message : 'Error connecting to compilation service.'
@@ -156,6 +178,51 @@ export default function ContractsPage() {
     if (!isConnected || !address) {
       setError('Please connect your wallet to deploy contracts');
       return;
+    }
+
+    // Check if the wallet is connected to the correct network
+    try {
+      // @ts-ignore - window.ethereum is injected by wallet
+      const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+      const currentChainId = parseInt(chainId, 16);
+      
+      if (currentChainId !== networkConfig.id) {
+        // Prompt user to switch networks
+        try {
+          // @ts-ignore - window.ethereum is injected by wallet
+          await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: `0x${networkConfig.id.toString(16)}` }],
+          });
+        } catch (switchError: any) {
+          // This error code indicates that the chain has not been added to MetaMask
+          if (switchError.code === 4902) {
+            try {
+              // @ts-ignore - window.ethereum is injected by wallet
+              await window.ethereum.request({
+                method: 'wallet_addEthereumChain',
+                params: [
+                  {
+                    chainId: `0x${networkConfig.id.toString(16)}`,
+                    chainName: networkConfig.name,
+                    nativeCurrency: networkConfig.nativeCurrency,
+                    rpcUrls: networkConfig.rpcUrls.default.http,
+                    blockExplorerUrls: [networkConfig.blockExplorers.default.url],
+                  },
+                ],
+              });
+            } catch (addError) {
+              setError('Could not add the Sonic network to your wallet. Please add it manually.');
+              return;
+            }
+          } else {
+            setError('Failed to switch networks. Please switch to the Sonic network manually.');
+            return;
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Error checking chain:', err);
     }
 
     setIsLoading(true);
@@ -196,8 +263,47 @@ export default function ContractsPage() {
         signer
       );
       
-      // Deploy contract
-      const contract = await factory.deploy();
+      // Deploy contract with appropriate constructor parameters based on contract type
+      let contract;
+      
+      try {
+        // Prepare constructor arguments based on contract type
+        if (selectedType === 'erc20') {
+          // ERC-20 Token constructor parameters: name, symbol, initialSupply, initialOwner
+          contract = await factory.deploy(
+            parameters.name || 'My Token',
+            parameters.symbol || 'MTK',
+            parameters.initialSupply ? parseInt(parameters.initialSupply) : 1000000,
+            address // Current wallet address as owner
+          );
+        } else if (selectedType === 'erc721') {
+          // ERC-721 NFT constructor parameters: name, symbol, baseURI, maxSupply, mintPrice, initialOwner
+          contract = await factory.deploy(
+            parameters.name || 'My NFT Collection',
+            parameters.symbol || 'MNFT',
+            parameters.baseURI || 'ipfs://',
+            parameters.maxSupply ? parseInt(parameters.maxSupply) : 10000,
+            parameters.mintPrice ? ethers.utils.parseEther(parameters.mintPrice) : ethers.utils.parseEther('0.05'),
+            address // Current wallet address as owner
+          );
+        } else if (selectedType === 'attestation' || selectedType === 'lending') {
+          // These contracts only need the owner address
+          contract = await factory.deploy(address);
+        } else {
+          // For custom contracts or unknown types, try deploying without parameters first
+          try {
+            contract = await factory.deploy();
+          } catch (deployError) {
+            // If that fails, try with the wallet address as a parameter
+            console.error('Deployment without parameters failed, trying with owner address:', deployError);
+            contract = await factory.deploy(address);
+          }
+        }
+      } catch (deployError) {
+        console.error('Deployment error:', deployError);
+        throw new Error(`Failed to deploy contract: ${deployError instanceof Error ? deployError.message : 'Unknown error'}`);
+      }
+      
       await contract.deployed();
       
       setDeploymentResult({
@@ -205,6 +311,7 @@ export default function ContractsPage() {
         transactionHash: contract.deployTransaction.hash,
         blockNumber: contract.deployTransaction.blockNumber,
         contractName: data.contractName || 'Contract',
+        network: selectedNetwork,
       });
       
       setStep(ContractStep.RESULT);
@@ -236,6 +343,7 @@ export default function ContractsPage() {
         body: JSON.stringify({
           address: deploymentResult.address,
           source: contractSource,
+          network: deploymentResult.network || selectedNetwork,
         }),
       });
 
@@ -315,6 +423,20 @@ export default function ContractsPage() {
     setContractSource(e.target.value);
     // Reset compilation result when code changes
     setCompilationResult(null);
+    
+    // If we're in the review step and have already compiled successfully before,
+    // automatically trigger compilation after a short delay
+    if (step === ContractStep.REVIEW) {
+      // Clear any existing timeout
+      if (window.autoCompileTimeout) {
+        clearTimeout(window.autoCompileTimeout);
+      }
+      
+      // Set a new timeout to compile after user stops typing
+      window.autoCompileTimeout = setTimeout(() => {
+        compileContract();
+      }, 1500);
+    }
   };
 
   if (!isConnected) {
@@ -605,12 +727,52 @@ export default function ContractsPage() {
                   <h3 className="text-lg font-medium mb-3">Deployment Settings</h3>
                   
                   <div className="mb-4">
+                    <label className="block text-sm font-medium mb-2">Select Network</label>
+                    <div className="flex space-x-4">
+                      <button
+                        type="button"
+                        className={`px-4 py-2 rounded-md flex items-center ${
+                          selectedNetwork === 'testnet'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                        }`}
+                        onClick={() => setSelectedNetwork('testnet')}
+                      >
+                        <FaNetworkWired className="mr-2" />
+                        Sonic Testnet
+                      </button>
+                      <button
+                        type="button"
+                        className={`px-4 py-2 rounded-md flex items-center ${
+                          selectedNetwork === 'mainnet'
+                            ? 'bg-green-600 text-white'
+                            : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                        }`}
+                        onClick={() => setSelectedNetwork('mainnet')}
+                      >
+                        <FaNetworkWired className="mr-2" />
+                        Sonic Mainnet
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div className="mb-4">
                     <p className="text-gray-300 mb-2">
-                      You are about to deploy your contract to the <span className="font-medium text-yellow-400">Sonic Blaze Testnet</span>.
+                      You are about to deploy your contract to the{' '}
+                      <span className={`font-medium ${selectedNetwork === 'testnet' ? 'text-yellow-400' : 'text-green-400'}`}>
+                        {networkConfig.name}
+                      </span>
                     </p>
                     <p className="text-gray-400 text-sm">
-                      Make sure your wallet is connected to the Sonic Blaze Testnet and has sufficient funds for gas fees.
+                      Make sure your wallet is connected to the {networkConfig.name} and has sufficient funds for gas fees.
                     </p>
+                    
+                    {selectedNetwork === 'mainnet' && (
+                      <div className="mt-2 p-3 bg-red-900/20 border border-red-800 rounded-md text-red-300 text-sm">
+                        <FaExclamationTriangle className="inline mr-2" />
+                        Warning: You are deploying to Mainnet. This will use real funds.
+                      </div>
+                    )}
                   </div>
                   
                   <div className="bg-yellow-900/20 border border-yellow-800 rounded-md p-3 text-yellow-300 text-sm mb-4">
@@ -621,10 +783,14 @@ export default function ContractsPage() {
                 
                 <div className="flex justify-end">
                   <button
-                    className="px-4 py-2 rounded-md font-medium bg-blue-600 hover:bg-blue-700 text-white flex items-center"
+                    className={`px-4 py-2 rounded-md font-medium flex items-center ${
+                      selectedNetwork === 'testnet'
+                        ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                        : 'bg-green-600 hover:bg-green-700 text-white'
+                    }`}
                     onClick={deployContract}
                   >
-                    <FaRocket className="mr-2" /> Deploy Contract
+                    <FaRocket className="mr-2" /> Deploy to {networkConfig.name}
                   </button>
                 </div>
               </div>
@@ -642,7 +808,12 @@ export default function ContractsPage() {
                     </div>
                     <div>
                       <h3 className="text-lg font-medium text-green-300">Contract Deployed</h3>
-                      <p className="text-gray-300">Your contract has been successfully deployed to the Sonic blockchain</p>
+                      <p className="text-gray-300">
+                        Your contract has been successfully deployed to the{' '}
+                        <span className="font-medium">
+                          {deploymentResult.network === 'mainnet' ? 'Sonic Mainnet' : 'Sonic Testnet'}
+                        </span>
+                      </p>
                     </div>
                   </div>
                   
@@ -680,7 +851,7 @@ export default function ContractsPage() {
                   
                   <div className="flex flex-wrap gap-3">
                     <a
-                      href={`${sonicBlazeTestnet.blockExplorers.default.url}/address/${deploymentResult.address}`}
+                      href={`${deploymentResult.network === 'mainnet' ? sonicMainnet.blockExplorers.default.url : sonicBlazeTestnet.blockExplorers.default.url}/address/${deploymentResult.address}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm"

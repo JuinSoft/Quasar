@@ -21,6 +21,11 @@ By combining real-time market data, sentiment analysis, and AI-driven insights, 
 - **User-Friendly Interface**: Modern, responsive UI built with Next.js, TypeScript, and Tailwind CSS
 - **Secure Wallet Connection**: Easy wallet integration with RainbowKit
 - **Floating Chatbot**: Access AI assistance from any page in the application
+- **Smart Contract Studio**: Create, edit, and deploy smart contracts directly from the browser
+- **Live Contract Editing**: Edit contract templates with real-time compilation and automatic deployment
+- **Multi-Network Support**: Deploy contracts to Sonic Testnet or Mainnet
+- **AI Contract Assistant**: Get AI help with smart contract development and troubleshooting
+- **Contract Verification**: Automatically verify deployed contracts on Sonic blockchain explorer
 
 ## 🏗️ Architecture
 
@@ -54,10 +59,10 @@ Quasar follows a modern web application architecture with several key components
 
 - **Network Name**: Sonic Blaze Testnet
 - **RPC URL**: https://rpc.blaze.soniclabs.com
-- **Explorer URL**: https://testnet.sonicscan.org
+- **Explorer URL**: https://testnet.soniclabs.com
 - **Chain ID**: 57054
 - **Currency Symbol**: S
-- **Faucet**: https://testnet.soniclabs.com/account
+- **Faucet**: https://testnet.soniclabs.comaccount
 
 ## 🚀 Getting Started
 
@@ -98,12 +103,19 @@ Quasar follows a modern web application architecture with several key components
 ## 📱 Usage
 
 1. **Connect Wallet**: Connect your wallet to the Sonic Blaze Testnet using the "Connect Wallet" button
-2. **Get Test Tokens**: If you need test tokens, visit the [Sonic Faucet](https://testnet.soniclabs.com/account)
+2. **Get Test Tokens**: If you need test tokens, visit the [Sonic Faucet](https://testnet.soniclabs.comaccount)
 3. **AI Assistant**: Use the floating chatbot in the bottom-right corner to ask questions about crypto markets, trends, or investment strategies
 4. **Live Crypto Data**: View real-time cryptocurrency prices, market caps, and percentage changes
 5. **Reddit Sentiment**: Analyze community sentiment from the r/0xSonic subreddit
 6. **News Analysis**: Read the latest crypto news with AI-generated sentiment analysis
 7. **Market Analysis**: Get detailed market analysis with buy/sell/hold recommendations
+8. **Smart Contract Studio**: Create and deploy smart contracts with these steps:
+   - Select a contract template or request a custom contract
+   - Configure contract parameters or provide a detailed description
+   - Review and edit the generated contract in the live editor
+   - Compile the contract to check for errors
+   - Deploy the contract to Sonic Testnet or Mainnet
+   - Verify the contract on the blockchain explorer
 
 ## 🧠 AI Capabilities
 
@@ -163,6 +175,14 @@ Aggregates and analyzes news related to Sonic and the broader cryptocurrency mar
 
 ### 6. Market Analysis
 AI-powered analysis of cryptocurrency markets with actionable insights and recommendations.
+
+### 7. Smart Contract Studio
+A comprehensive environment for creating, editing, and deploying smart contracts on the Sonic blockchain with features like:
+- Template-based contract generation
+- Live contract editing with real-time compilation
+- AI-assisted contract development
+- Multi-network deployment (Testnet/Mainnet)
+- Automatic contract verification
 
 ## 🧪 Development
 

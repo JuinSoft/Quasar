@@ -52,7 +52,7 @@ export default function Footer() {
             <h4 className="text-white font-semibold mb-2">Sonic Blockchain Resources</h4>
             <div className="flex flex-col space-y-2">
               <Link 
-                href="https://testnet.sonicscan.org" 
+                href="https://testnet.soniclabs.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-white transition-colors text-sm"
@@ -60,7 +60,7 @@ export default function Footer() {
                 Block Explorer
               </Link>
               <Link 
-                href="https://testnet.soniclabs.com/account" 
+                href="https://testnet.soniclabs.comaccount" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-white transition-colors text-sm"

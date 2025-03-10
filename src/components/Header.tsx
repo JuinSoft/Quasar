@@ -73,6 +73,25 @@ const SonicPrice = () => {
 };
 
 export default function Header() {
+  const [activeLink, setActiveLink] = useState('/');
+
+  // Set active link based on current path
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setActiveLink(window.location.pathname);
+    }
+  }, []);
+
+  // Navigation links configuration
+  const navLinks = [
+    { href: '/', icon: <FaHome />, label: 'Home' },
+    { href: '/defi', icon: <FaExchangeAlt />, label: 'DeFi' },
+    { href: '/live-crypto', icon: <FaBitcoin />, label: 'Live Crypto' },
+    { href: '/contracts', icon: <FaFileContract />, label: 'Contracts' },
+    { href: '/news', icon: <FaNewspaper />, label: 'News' },
+    { href: '/market-analysis', icon: <FaChartLine />, label: 'Market Analysis' },
+  ];
+
   return (
     <motion.header 
       className="bg-gray-900/80 backdrop-blur-md text-white py-4 px-6 shadow-lg sticky top-0 z-50"
@@ -82,7 +101,7 @@ export default function Header() {
     >
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center space-x-2">
-          <Link href="/" className="text-2xl font-bold gradient-text gradient-primary hover:opacity-80 transition-opacity">
+          <Link href="/" prefetch={true} className="text-2xl font-bold gradient-text gradient-primary hover:opacity-80 transition-opacity">
             Quasar
           </Link>
           <span className="text-sm bg-gradient-to-r from-blue-600 to-blue-500 px-2 py-1 rounded-full">Sonic Blockchain</span>
@@ -94,30 +113,22 @@ export default function Header() {
         </div>
         
         <nav className="hidden md:flex items-center space-x-6">
-          <Link href="/" className="flex items-center space-x-1 text-gray-300 hover:text-white transition-colors">
-            <FaHome />
-            <span>Home</span>
-          </Link>
-          <Link href="/live-crypto" className="flex items-center space-x-1 text-gray-300 hover:text-white transition-colors">
-            <FaBitcoin />
-            <span>Live Crypto</span>
-          </Link>
-          <Link href="/defi" className="flex items-center space-x-1 text-gray-300 hover:text-white transition-colors">
-            <FaExchangeAlt />
-            <span>DeFi</span>
-          </Link>
-          <Link href="/contracts" className="flex items-center space-x-1 text-gray-300 hover:text-white transition-colors">
-            <FaFileContract />
-            <span>Contracts</span>
-          </Link>
-          <Link href="/news" className="flex items-center space-x-1 text-gray-300 hover:text-white transition-colors">
-            <FaNewspaper />
-            <span>News</span>
-          </Link>
-          <Link href="/market-analysis" className="flex items-center space-x-1 text-gray-300 hover:text-white transition-colors">
-            <FaChartLine />
-            <span>Market Analysis</span>
-          </Link>
+          {navLinks.map((link) => (
+            <Link 
+              key={link.href}
+              href={link.href}
+              prefetch={true}
+              className={`flex items-center space-x-1 transition-colors ${
+                activeLink === link.href 
+                  ? 'text-white font-medium' 
+                  : 'text-gray-300 hover:text-white'
+              }`}
+              onClick={() => setActiveLink(link.href)}
+            >
+              {link.icon}
+              <span>{link.label}</span>
+            </Link>
+          ))}
         </nav>
         
         <WalletConnect />

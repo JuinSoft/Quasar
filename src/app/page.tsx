@@ -81,7 +81,7 @@ export default function Home() {
             <p className="text-gray-400 text-sm">Get AI-powered sentiment analysis and trading recommendations</p>
           </Link>
           
-          <a href="https://testnet.soniclabs.com/account" target="_blank" rel="noopener noreferrer" className="card bg-gray-800/50 p-6 rounded-xl text-center hover:bg-gray-800/70 transition-all">
+          <a href="https://testnet.soniclabs.comaccount" target="_blank" rel="noopener noreferrer" className="card bg-gray-800/50 p-6 rounded-xl text-center hover:bg-gray-800/70 transition-all">
             <div className="bg-orange-600/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
               <FaRocket className="text-orange-400" size={24} />
             </div>
@@ -100,7 +100,7 @@ export default function Home() {
         </p>
         <div className="flex flex-wrap justify-center gap-4 mt-6">
           <a 
-            href="https://testnet.sonicscan.org" 
+            href="https://testnet.soniclabs.com" 
             target="_blank" 
             rel="noopener noreferrer"
             className="btn bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white px-6 py-3 rounded-lg transition-all shadow-lg"
@@ -108,7 +108,7 @@ export default function Home() {
             Explorer
           </a>
           <a 
-            href="https://testnet.soniclabs.com/account" 
+            href="https://testnet.soniclabs.comaccount" 
             target="_blank" 
             rel="noopener noreferrer"
             className="btn bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-lg transition-colors shadow-lg"

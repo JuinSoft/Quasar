@@ -17,10 +17,19 @@ contract {{tokenName}} is ERC20, Ownable {
         _mint(initialOwner, initialSupply * 10 ** decimals());
     }
 
+    /**
+     * @notice Mint new tokens
+     * @param to The address that will receive the minted tokens
+     * @param amount The amount of tokens to mint
+     */
     function mint(address to, uint256 amount) public onlyOwner {
         _mint(to, amount);
     }
 
+    /**
+     * @notice Burn tokens from the caller's account
+     * @param amount The amount of tokens to burn
+     */
     function burn(uint256 amount) public {
         _burn(_msgSender(), amount);
     }
@@ -56,6 +65,12 @@ contract {{nftName}} is ERC721URIStorage, Ownable {
         mintPrice = _mintPrice;
     }
 
+    /**
+     * @notice Mint a new NFT
+     * @param recipient The address that will receive the minted NFT
+     * @param tokenURI The URI for the token metadata
+     * @return The ID of the newly minted token
+     */
     function mint(address recipient, string memory tokenURI) public payable returns (uint256) {
         require(!paused, "Minting is paused");
         require(_tokenIds.current() < maxSupply, "Max supply reached");
@@ -72,18 +87,33 @@ contract {{nftName}} is ERC721URIStorage, Ownable {
         return newItemId;
     }
 
+    /**
+     * @notice Set the base URI for all token metadata
+     * @param _baseURI The new base URI
+     */
     function setBaseURI(string memory _baseURI) public onlyOwner {
         baseURI = _baseURI;
     }
 
+    /**
+     * @notice Set the mint price for NFTs
+     * @param _mintPrice The new mint price in wei
+     */
     function setMintPrice(uint256 _mintPrice) public onlyOwner {
         mintPrice = _mintPrice;
     }
 
+    /**
+     * @notice Pause or unpause minting
+     * @param _paused Whether minting should be paused
+     */
     function setPaused(bool _paused) public onlyOwner {
         paused = _paused;
     }
 
+    /**
+     * @notice Withdraw all ETH from the contract to the owner
+     */
     function withdraw() public onlyOwner {
         uint256 balance = address(this).balance;
         payable(owner()).transfer(balance);
@@ -114,8 +144,15 @@ contract DocumentAttestation is Ownable {
     
     event DocumentAttested(uint256 attestationId, address attester, string documentHash, uint256 timestamp);
     
-    constructor(address initialOwner) Ownable(initialOwner) {}
+    constructor(address initialOwner) Ownable() {}
     
+    /**
+     * @notice Create a new document attestation
+     * @param documentHash The hash of the document being attested
+     * @param documentName The name of the document
+     * @param encryptedCID The encrypted IPFS CID of the document
+     * @return attestationId The ID of the newly created attestation
+     */
     function attestDocument(
         string memory documentHash,
         string memory documentName,
@@ -139,6 +176,15 @@ contract DocumentAttestation is Ownable {
         return attestationId;
     }
     
+    /**
+     * @notice Get attestation details by ID
+     * @param attestationId The ID of the attestation to retrieve
+     * @return attester The address that created the attestation
+     * @return documentHash The hash of the attested document
+     * @return documentName The name of the attested document
+     * @return encryptedCID The encrypted IPFS CID of the document
+     * @return timestamp The time when the attestation was created
+     */
     function getAttestation(uint256 attestationId) public view returns (
         address attester,
         string memory documentHash,
@@ -156,6 +202,11 @@ contract DocumentAttestation is Ownable {
         );
     }
     
+    /**
+     * @notice Get all attestation IDs created by a specific user
+     * @param user The address of the user
+     * @return An array of attestation IDs created by the user
+     */
     function getUserAttestations(address user) public view returns (uint256[] memory) {
         return userAttestations[user];
     }
@@ -201,8 +252,14 @@ contract LendingPool is Ownable, ReentrancyGuard {
     event Repay(address indexed user, address indexed token, uint256 amount);
     event LiquidatePosition(address indexed user, address indexed debtToken, address indexed liquidator, uint256 debtAmount, uint256 collateralAmount);
     
-    constructor(address initialOwner) Ownable(initialOwner) {}
+    constructor(address initialOwner) Ownable() {}
     
+    /**
+     * @notice Add a new token to the supported tokens list
+     * @param tokenAddress The address of the ERC20 token to support
+     * @param interestRate The annual interest rate for this token (in basis points, 1% = 100)
+     * @param collateralRatio The collateral ratio required for borrowing (in basis points, 150% = 15000)
+     */
     function addSupportedToken(
         address tokenAddress,
         uint256 interestRate,
@@ -223,6 +280,11 @@ contract LendingPool is Ownable, ReentrancyGuard {
         tokenAddresses.push(tokenAddress);
     }
     
+    /**
+     * @notice Deposit tokens into the lending pool
+     * @param tokenAddress The address of the token to deposit
+     * @param amount The amount of tokens to deposit
+     */
     function deposit(address tokenAddress, uint256 amount) external nonReentrant {
         require(supportedTokens[tokenAddress].enabled, "Token not supported");
         require(amount > 0, "Amount must be greater than 0");
@@ -252,6 +314,11 @@ contract LendingPool is Ownable, ReentrancyGuard {
         emit Deposit(msg.sender, tokenAddress, amount);
     }
     
+    /**
+     * @notice Withdraw tokens from the lending pool
+     * @param tokenAddress The address of the token to withdraw
+     * @param amount The amount of tokens to withdraw
+     */
     function withdraw(address tokenAddress, uint256 amount) external nonReentrant {
         require(supportedTokens[tokenAddress].enabled, "Token not supported");
         
@@ -281,6 +348,12 @@ contract LendingPool is Ownable, ReentrancyGuard {
         emit Withdraw(msg.sender, tokenAddress, amount);
     }
     
+    /**
+     * @notice Borrow tokens using another token as collateral
+     * @param tokenAddress The address of the token to borrow
+     * @param amount The amount of tokens to borrow
+     * @param collateralTokenAddress The address of the token to use as collateral
+     */
     function borrow(
         address tokenAddress,
         uint256 amount,
@@ -328,6 +401,11 @@ contract LendingPool is Ownable, ReentrancyGuard {
         emit Borrow(msg.sender, tokenAddress, amount, collateralTokenAddress, requiredCollateral);
     }
     
+    /**
+     * @notice Repay borrowed tokens
+     * @param tokenAddress The address of the token to repay
+     * @param amount The amount of tokens to repay
+     */
     function repay(address tokenAddress, uint256 amount) external nonReentrant {
         require(supportedTokens[tokenAddress].enabled, "Token not supported");
         
@@ -370,6 +448,13 @@ contract LendingPool is Ownable, ReentrancyGuard {
         emit Repay(msg.sender, tokenAddress, repayAmount);
     }
     
+    /**
+     * @notice Calculate deposit amount with accrued interest
+     * @param amount The original deposit amount
+     * @param interestRate The annual interest rate (in basis points, 1% = 100)
+     * @param lastUpdateTime The timestamp when the deposit was last updated
+     * @return The deposit amount with accrued interest
+     */
     function calculateDepositWithInterest(
         uint256 amount,
         uint256 interestRate,
@@ -380,6 +465,13 @@ contract LendingPool is Ownable, ReentrancyGuard {
         return amount + interest;
     }
     
+    /**
+     * @notice Calculate borrow amount with accrued interest
+     * @param amount The original borrow amount
+     * @param interestRate The annual interest rate (in basis points, 1% = 100)
+     * @param lastUpdateTime The timestamp when the borrow was last updated
+     * @return The borrow amount with accrued interest
+     */
     function calculateBorrowWithInterest(
         uint256 amount,
         uint256 interestRate,

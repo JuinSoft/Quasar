@@ -48,7 +48,7 @@ export default function AboutPage() {
             <ul className="space-y-2">
               <li>
                 <Link 
-                  href="https://testnet.sonicscan.org" 
+                  href="https://testnet.soniclabs.com" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-blue-400 hover:text-blue-300"
@@ -58,7 +58,7 @@ export default function AboutPage() {
               </li>
               <li>
                 <Link 
-                  href="https://testnet.soniclabs.com/account" 
+                  href="https://testnet.soniclabs.comaccount" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-blue-400 hover:text-blue-300"

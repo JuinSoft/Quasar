@@ -33,9 +33,12 @@ export default function ContractsPage() {
   useEffect(() => {
     if (selectedType) {
       const defaultParams: Record<string, string> = {};
-      contractTemplates[selectedType]?.parameters.forEach(param => {
-        defaultParams[param.name] = '';
-      });
+      const templateParams = contractTemplates[selectedType as keyof typeof contractTemplates]?.parameters;
+      if (templateParams) {
+        templateParams.forEach((param: { name: string }) => {
+          defaultParams[param.name] = '';
+        });
+      }
       setParameters(defaultParams);
     }
   }, [selectedType]);
@@ -60,7 +63,7 @@ export default function ContractsPage() {
 
     try {
       // If using AI generation
-      if (customDescription || !contractTemplates[selectedType]) {
+      if (customDescription || !selectedType || !contractTemplates[selectedType as keyof typeof contractTemplates]) {
         setIsAIGenerating(true);
         const response = await fetch('/api/generate-contract', {
           method: 'POST',
@@ -83,7 +86,7 @@ export default function ContractsPage() {
         setIsAIGenerating(false);
       } else {
         // Use template-based generation
-        let source = contractTemplates[selectedType].template;
+        let source = contractTemplates[selectedType as keyof typeof contractTemplates].template;
         
         // Replace parameters in template
         Object.entries(parameters).forEach(([key, value]) => {
@@ -113,17 +116,51 @@ export default function ContractsPage() {
     setError(null);
 
     try {
-      // In a real implementation, we would compile and deploy the contract here
-      // For this demo, we'll simulate deployment
+      // Check if the wallet is connected to the correct network
+      // @ts-ignore - window.ethereum is injected by wallet
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
       
-      // Simulate deployment delay
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      // Compile contract
+      const response = await fetch('/api/contracts/compile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          source: contractSource,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.details || errorData.error || 'Compilation failed');
+      }
+
+      const data = await response.json();
       
-      // Simulate successful deployment
+      // Validate the response data
+      if (!data.abi || !data.bytecode) {
+        throw new Error('Invalid compilation result: missing ABI or bytecode');
+      }
+      
+      // Create contract factory
+      const factory = new ethers.ContractFactory(
+        data.abi,
+        data.bytecode,
+        signer
+      );
+      
+      // Deploy contract
+      const contract = await factory.deploy();
+      await contract.deployed();
+      
+      // Use the actual transaction hash and contract address
       setDeploymentResult({
         success: true,
-        contractAddress: `0x${Math.random().toString(36).substring(2, 12)}`,
-        transactionHash: `0x${Math.random().toString(36).substring(2, 42)}`,
+        contractAddress: contract.address,
+        transactionHash: contract.deployTransaction.hash,
+        explorerUrl: `https://testnet.soniclabs.com/tx/${contract.deployTransaction.hash}`,
       });
       
       setStep(ContractStep.RESULT);
@@ -308,7 +345,7 @@ export default function ContractsPage() {
                 </div>
               ) : (
                 <div className="space-y-4 mb-6">
-                  {contractTemplates[selectedType]?.parameters.map(param => (
+                  {contractTemplates[selectedType as keyof typeof contractTemplates]?.parameters.map((param: { name: string; label: string; type: string; placeholder: string }) => (
                     <div key={param.name}>
                       <label className="block text-sm font-medium mb-2">{param.label}</label>
                       <input
@@ -485,7 +522,7 @@ export default function ContractsPage() {
               
               <div className="flex justify-between">
                 <button
-                  onClick={() => window.open(`${sonicBlazeTestnet.blockExplorers.default.url}/address/${deploymentResult.contractAddress}`, '_blank')}
+                  onClick={() => window.open(deploymentResult.explorerUrl, '_blank')}
                   className="px-4 py-2 rounded-md font-medium bg-gray-700 hover:bg-gray-600 text-white"
                 >
                   View on Explorer

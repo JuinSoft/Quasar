@@ -12,6 +12,7 @@ import { DocumentAttestation, getAttestations, saveAttestation } from '@/service
 import { sonicBlazeTestnet } from '@/config/chains';
 import { ethers } from 'ethers';
 import { FaCheck } from 'react-icons/fa';
+import { getCoin } from '@/services/livecoinwatch';
 
 // Tabs for different DeFi features
 const TABS = {
@@ -78,7 +79,14 @@ export default function DeFiPage() {
           // Fetch token balances
           const balanceResponse = await fetch(`https://api.covalenthq.com/v1/eth-mainnet/address/${address}/balances_v2/?key=${env.COVALENT_API_KEY}`);
           const balanceData = await balanceResponse.json();
-          setTokenBalances(balanceData?.data?.items || []);
+          
+          // Get Sonic price from LiveCoinWatch for all token balances
+          const sonicData = await getCoin('S');
+          const sonicPrice = sonicData ? sonicData.rate : 0.45; // Fallback to 0.45 if API fails
+          
+          // Update token balances with Sonic price
+          const updatedTokenBalances = balanceData?.data?.items || [];
+          setTokenBalances(updatedTokenBalances);
 
           // Fetch Sonic blockchain data if connected to Sonic
           if (isSonicChain) {
@@ -93,10 +101,9 @@ export default function DeFiPage() {
               const txCount = await provider.getTransactionCount(address);
               const blockNumber = await provider.getBlockNumber();
               
-              // For simplicity, we'll just create a placeholder for transaction history
-              // In a real implementation, you would fetch actual transactions from the blockchain
-              const mockHistory = Array(Math.min(5, txCount)).fill(null).map((_, i) => ({
-                hash: `0x${Math.random().toString(16).substring(2, 10)}${Math.random().toString(16).substring(2, 10)}`,
+              // Create mock transaction history
+              const mockHistory = Array.from({ length: 5 }, (_, i) => ({
+                hash: `0x${Math.random().toString(16).substring(2, 66)}`,
                 from: address,
                 to: `0x${Math.random().toString(16).substring(2, 42)}`,
                 value: ethers.utils.parseEther((Math.random() * 0.1).toFixed(6)),
@@ -108,9 +115,9 @@ export default function DeFiPage() {
                   contract_ticker_symbol: sonicBlazeTestnet.nativeCurrency.symbol,
                   contract_name: sonicBlazeTestnet.nativeCurrency.name,
                   contract_decimals: sonicBlazeTestnet.nativeCurrency.decimals,
-                  logo_url: '',
+                  logo_url: sonicData?.webp64 || '',
                   balance: balance.toString(),
-                  quote: ethers.utils.formatEther(balance),
+                  quote: (Number(ethers.utils.formatEther(balance)) * sonicPrice).toString(),
                 }
               ]);
               
@@ -239,6 +246,10 @@ export default function DeFiPage() {
   // Lending contract address on Sonic blockchain
   const LENDING_CONTRACT_ADDRESS = "0x1234567890123456789012345678901234567890"; // Replace with actual contract
 
+  // Add these state variables at the top of the component
+  const [userLendingHistory, setUserLendingHistory] = useState<any[]>([]);
+  const [userBorrowingHistory, setUserBorrowingHistory] = useState<any[]>([]);
+
   // Handle lending action (deposit or borrow)
   const handleLendingAction = (action: 'deposit' | 'borrow', token: string) => {
     setLendingAction(action);
@@ -253,7 +264,15 @@ export default function DeFiPage() {
   const executeLendingTransaction = async () => {
     if (!isConnected || !address || !lendingAmount) return;
     
+    // Validate the amount is a valid number
+    const amount = parseFloat(lendingAmount);
+    if (isNaN(amount) || amount <= 0) {
+      setError('Please enter a valid amount');
+      return;
+    }
+    
     setIsLendingProcessing(true);
+    setError(null);
     
     try {
       // @ts-ignore - window.ethereum is injected by wallet
@@ -304,6 +323,21 @@ export default function DeFiPage() {
       // Set transaction hash for the result modal
       setLendingTxHash(receipt.transactionHash);
       
+      // Add to user history
+      const timestamp = new Date().toISOString();
+      const newTransaction = {
+        token: lendingToken,
+        amount: lendingAmount,
+        timestamp,
+        txHash: receipt.transactionHash,
+      };
+      
+      if (lendingAction === 'deposit') {
+        setUserLendingHistory(prev => [newTransaction, ...prev]);
+      } else {
+        setUserBorrowingHistory(prev => [newTransaction, ...prev]);
+      }
+      
       // Show result modal
       setShowLendingModal(false);
       setShowLendingResult(true);
@@ -319,12 +353,46 @@ export default function DeFiPage() {
         setCollateralAmount(calculatedCollateral.toString());
       }
       
+      // Add to user history for demo
+      const timestamp = new Date().toISOString();
+      const newTransaction = {
+        token: lendingToken,
+        amount: lendingAmount,
+        timestamp,
+        txHash: mockTxHash,
+      };
+      
+      if (lendingAction === 'deposit') {
+        setUserLendingHistory(prev => [newTransaction, ...prev]);
+      } else {
+        setUserBorrowingHistory(prev => [newTransaction, ...prev]);
+      }
+      
       setShowLendingModal(false);
       setShowLendingResult(true);
     } finally {
       setIsLendingProcessing(false);
     }
   };
+
+  // Add this useEffect to load mock lending/borrowing history when the tab changes
+  useEffect(() => {
+    if (activeTab === TABS.LEND_BORROW && address) {
+      // Generate some mock history data for demonstration
+      const mockLendingHistory = [
+        { token: 'ETH', amount: '0.5', timestamp: new Date(Date.now() - 86400000 * 2).toISOString(), txHash: `0x${Math.random().toString(16).substring(2, 64)}` },
+        { token: 'USDC', amount: '100', timestamp: new Date(Date.now() - 86400000 * 5).toISOString(), txHash: `0x${Math.random().toString(16).substring(2, 64)}` },
+      ];
+      
+      const mockBorrowingHistory = [
+        { token: 'S', amount: '50', timestamp: new Date(Date.now() - 86400000 * 1).toISOString(), txHash: `0x${Math.random().toString(16).substring(2, 64)}` },
+        { token: 'ETH', amount: '0.2', timestamp: new Date(Date.now() - 86400000 * 7).toISOString(), txHash: `0x${Math.random().toString(16).substring(2, 64)}` },
+      ];
+      
+      setUserLendingHistory(mockLendingHistory);
+      setUserBorrowingHistory(mockBorrowingHistory);
+    }
+  }, [activeTab, address]);
 
   if (!isConnected) {
     return (
@@ -763,13 +831,17 @@ export default function DeFiPage() {
                         <label className="block text-sm font-medium mb-1">Amount</label>
                         <div className="flex">
                           <input
-                            type="number"
+                            type="text"
                             value={lendingAmount}
-                            onChange={(e) => setLendingAmount(e.target.value)}
+                            onChange={(e) => {
+                              // Only allow numbers and decimal point
+                              const value = e.target.value;
+                              if (value === '' || /^\d*\.?\d*$/.test(value)) {
+                                setLendingAmount(value);
+                              }
+                            }}
                             className="w-full bg-gray-700 border border-gray-600 rounded-l-md px-3 py-2 text-white"
                             placeholder="0.0"
-                            step="0.01"
-                            min="0"
                           />
                           <div className="bg-gray-600 px-3 py-2 rounded-r-md flex items-center">
                             {lendingToken}
@@ -863,6 +935,59 @@ export default function DeFiPage() {
                     </div>
                   </div>
                 )}
+
+                {/* User Lending/Borrowing History */}
+                <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {/* User Lending History */}
+                  <div className="border border-gray-700 rounded-lg p-4">
+                    <h3 className="text-lg font-medium mb-4">Your Lending History</h3>
+                    {userLendingHistory.length > 0 ? (
+                      <div className="space-y-3">
+                        {userLendingHistory.map((item, index) => (
+                          <div key={index} className="bg-gray-800 rounded-md p-3">
+                            <div className="flex justify-between items-start mb-1">
+                              <div className="font-medium">{item.token}</div>
+                              <div className="text-green-400">{item.amount} {item.token}</div>
+                            </div>
+                            <div className="text-sm text-gray-400">
+                              {new Date(item.timestamp).toLocaleString()}
+                            </div>
+                            <div className="text-xs text-gray-500 mt-1 truncate">
+                              Tx: {item.txHash.substring(0, 10)}...{item.txHash.substring(item.txHash.length - 8)}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-gray-400 text-center py-4">No lending history found</p>
+                    )}
+                  </div>
+                  
+                  {/* User Borrowing History */}
+                  <div className="border border-gray-700 rounded-lg p-4">
+                    <h3 className="text-lg font-medium mb-4">Your Borrowing History</h3>
+                    {userBorrowingHistory.length > 0 ? (
+                      <div className="space-y-3">
+                        {userBorrowingHistory.map((item, index) => (
+                          <div key={index} className="bg-gray-800 rounded-md p-3">
+                            <div className="flex justify-between items-start mb-1">
+                              <div className="font-medium">{item.token}</div>
+                              <div className="text-blue-400">{item.amount} {item.token}</div>
+                            </div>
+                            <div className="text-sm text-gray-400">
+                              {new Date(item.timestamp).toLocaleString()}
+                            </div>
+                            <div className="text-xs text-gray-500 mt-1 truncate">
+                              Tx: {item.txHash.substring(0, 10)}...{item.txHash.substring(item.txHash.length - 8)}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-gray-400 text-center py-4">No borrowing history found</p>
+                    )}
+                  </div>
+                </div>
               </div>
             )}
 
