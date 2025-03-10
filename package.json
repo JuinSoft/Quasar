@@ -29,7 +29,9 @@
     "rss-parser": "^3.13.0",
     "viem": "^2.23.8",
     "wagmi": "^2.14.12",
-    "web3modal": "^1.9.12"
+    "web3modal": "^1.9.12",
+    "pino-pretty": "^10.3.1",
+    "solc": "^0.8.20"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

@@ -125,7 +125,6 @@ export default function DeFiPage() {
         description: documentDescription,
         documentHash: result.documentHash,
         timestamp: result.timestamp,
-        encryptionKey: result.encryptionKey,
       };
       
       saveAttestation(newAttestation);

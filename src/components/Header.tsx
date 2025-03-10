@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import WalletConnect from './WalletConnect';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { FaHome, FaNewspaper, FaChartLine, FaBitcoin, FaArrowUp, FaArrowDown, FaExchangeAlt } from 'react-icons/fa';
+import { FaHome, FaNewspaper, FaChartLine, FaBitcoin, FaArrowUp, FaArrowDown, FaExchangeAlt, FaFileContract } from 'react-icons/fa';
 import { getCoin } from '@/services/livecoinwatch';
 import Image from 'next/image';
 
@@ -105,6 +105,10 @@ export default function Header() {
           <Link href="/defi" className="flex items-center space-x-1 text-gray-300 hover:text-white transition-colors">
             <FaExchangeAlt />
             <span>DeFi</span>
+          </Link>
+          <Link href="/contracts" className="flex items-center space-x-1 text-gray-300 hover:text-white transition-colors">
+            <FaFileContract />
+            <span>Contracts</span>
           </Link>
           <Link href="/news" className="flex items-center space-x-1 text-gray-300 hover:text-white transition-colors">
             <FaNewspaper />

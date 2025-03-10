@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ethers } from 'ethers';
-import * as CryptoJS from 'crypto-js';
 import { sonicBlazeTestnet } from '@/config/chains';
 
 // Simple attestation contract ABI (for demonstration)
 const ATTESTATION_ABI = [
-  "function attestDocument(string memory documentHash, string memory documentName, string memory encryptedCID) public returns (uint256)",
-  "function getAttestation(uint256 attestationId) public view returns (address attester, string memory documentHash, string memory documentName, string memory encryptedCID, uint256 timestamp)"
+  "function attestDocument(string memory documentHash, string memory documentName, string memory documentURI) public returns (uint256)",
+  "function getAttestation(uint256 attestationId) public view returns (address attester, string memory documentHash, string memory documentName, string memory documentURI, uint256 timestamp)"
 ];
 
 // Contract address (this would be your deployed contract on Sonic blockchain)
@@ -35,38 +34,18 @@ export async function POST(req: NextRequest) {
     // Create a hash of the document for verification
     const documentHash = ethers.utils.keccak256(fileBytes);
     
-    // Generate a random encryption key
-    const encryptionKey = CryptoJS.lib.WordArray.random(32).toString();
+    // Generate a random encryption key - using a safer approach
+    const randomBytes = new Uint8Array(32);
+    crypto.getRandomValues(randomBytes);
+    const encryptionKey = Array.from(randomBytes)
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
     
-    // Encrypt the file content
-    const fileContent = await file.text();
-    const encryptedContent = CryptoJS.AES.encrypt(fileContent, encryptionKey).toString();
-    
-    // In a real implementation, you would upload the encrypted content to IPFS or another storage
+    // In a real implementation, you would encrypt and upload the content to IPFS
     // For this demo, we'll simulate getting a CID back
     const mockCID = `ipfs://Qm${Math.random().toString(36).substring(2, 15)}`;
     
-    // Encrypt the CID with the user's public key (in a real implementation)
-    // For demo, we'll just encrypt it with the encryption key
-    const encryptedCID = CryptoJS.AES.encrypt(mockCID, encryptionKey).toString();
-    
-    // Connect to the Sonic blockchain (in a real implementation)
-    // For demo purposes, we'll simulate the attestation
-    
-    // In a real implementation, you would:
-    // 1. Connect to the Sonic blockchain
-    // const provider = new ethers.providers.JsonRpcProvider(sonicBlazeTestnet.rpcUrls.default.http[0]);
-    // const wallet = new ethers.Wallet(process.env.PRIVATE_KEY as string, provider);
-    // const contract = new ethers.Contract(ATTESTATION_CONTRACT_ADDRESS, ATTESTATION_ABI, wallet);
-    
-    // 2. Call the attestation contract
-    // const tx = await contract.attestDocument(documentHash, name, encryptedCID);
-    // const receipt = await tx.wait();
-    
-    // 3. Get the attestation ID from the event logs
-    // const attestationId = receipt.events[0].args.attestationId;
-    
-    // For demo, we'll simulate an attestation ID
+    // For demo, we'll simulate the attestation
     const attestationId = Math.floor(Math.random() * 1000000);
     
     // Return the attestation details and encryption key to the client
@@ -74,7 +53,8 @@ export async function POST(req: NextRequest) {
       success: true,
       attestationId,
       documentHash,
-      encryptionKey, // In a real implementation, this would be securely transmitted
+      encryptionKey,
+      documentURI: mockCID,
       name,
       timestamp: new Date().toISOString(),
     });
