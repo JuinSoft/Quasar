@@ -11,7 +11,7 @@ export async function GET() {
   try {
     // Use OpenAI to search for recent Sonic coin news
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4-turbo-preview",
       messages: [
         {
           role: "system",

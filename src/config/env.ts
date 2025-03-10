@@ -5,6 +5,9 @@ export const env = {
   // WalletConnect Project ID
   WALLET_CONNECT_PROJECT_ID: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || '',
   
+  // Covalent API Key
+  COVALENT_API_KEY: process.env.NEXT_PUBLIC_COVALENT_API_KEY || '',
+  
   // Environment
   NODE_ENV: process.env.NODE_ENV || 'development',
   

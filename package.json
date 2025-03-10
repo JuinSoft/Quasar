@@ -10,9 +10,14 @@
     "copy-icons": "node scripts/copy-crypto-icons.js"
   },
   "dependencies": {
+    "@bigmi/react": "^0.1.1",
+    "@lifi/sdk": "^3.5.4",
+    "@lifi/widget": "^3.17.1",
     "@rainbow-me/rainbowkit": "^2.2.4",
+    "@solana/wallet-adapter-react": "^0.15.35",
     "@tanstack/react-query": "^5.67.2",
     "axios": "^1.8.2",
+    "crypto-js": "^4.2.0",
     "cryptocurrency-icons": "^0.18.1",
     "ethers": "^5.7.2",
     "framer-motion": "^12.4.10",
@@ -29,6 +34,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/crypto-js": "^4.2.2",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

@@ -75,7 +75,7 @@ export default function SonicCoinInfo() {
           />
         )}
         <h2 className="text-2xl font-semibold gradient-text gradient-primary">
-          {sonicData.name} ("S")
+          {sonicData.name} (S)
         </h2>
       </div>
 
