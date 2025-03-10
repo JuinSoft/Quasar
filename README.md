@@ -1,35 +1,77 @@
-# Quasar - AI Crypto Analysis on Sonic Blockchain
+# Quasar - Cross-Chain DeFi Platform on Sonic Blockchain
 
 ![Quasar Logo](public/quasar-logo.png)
 
-Quasar is an AI-powered decentralized application built on the Sonic Blockchain that enables users to interact with an advanced AI agent for comprehensive crypto market analysis and informed decision-making.
+Quasar is a comprehensive cross-chain DeFi platform built on the Sonic Blockchain that enables seamless token transfers, cross-chain swaps, advanced market analysis, and AI-generated smart contracts.
 
 ## 🔮 Vision & Mission
 
-Quasar aims to democratize access to sophisticated crypto market analysis by leveraging artificial intelligence and blockchain technology. Our mission is to provide retail investors with the same level of analytical capabilities that were previously only available to institutional investors.
+Quasar aims to bridge the gap between different blockchain networks while providing sophisticated market analysis and smart contract automation. Our mission is to create a unified DeFi experience that makes cross-chain operations accessible to all users while leveraging the power of AI for market insights and contract development.
 
-By combining real-time market data, sentiment analysis, and AI-driven insights, Quasar helps users make more informed decisions in the volatile cryptocurrency market. The platform is built on Sonic Blockchain to ensure fast, low-cost transactions and a seamless user experience.
+## 🌟 Core Features
+
+### Cross-Chain Operations
+- **Cross-Chain Swaps**: Seamless token swaps between major blockchain networks
+- **Unified Token Transfers**: Easy token transfers across different chains
+- **Bridge Integration**: Secure cross-chain bridges for major networks
+- **Atomic Swap Protocol**: Guaranteed transaction safety
+- **Gas Fee Optimization**: Smart routing for cost-effective transactions
+
+### Market Analysis
+- **Real-time Analytics**: Live price tracking and market metrics
+- **Technical Indicators**: Advanced trading indicators and signals
+- **AI-Powered Insights**: Intelligent market analysis and predictions
+- **Sentiment Analysis**: Social media and news sentiment tracking
+- **Trading Volume Analysis**: Deep liquidity analytics
+
+### AI Contract Generator
+- **Smart Contract Templates**: Pre-built contract templates
+- **Custom Contract Generation**: AI-assisted contract creation
+- **Security Automation**: Built-in security best practices
+- **Audit Checks**: Automated contract auditing
+- **Documentation**: Auto-generated technical documentation
 
 ## 🌟 Features
 
-- **Sonic Blockchain Integration**: Seamlessly connect to Sonic Blaze Testnet
-- **AI-Powered Analysis**: Chat with a sophisticated AI assistant for real-time crypto market insights
-- **Reddit Sentiment Analysis**: Analyze community sentiment from r/0xSonic and other crypto subreddits
-- **Live Crypto Data**: Real-time price tracking, market cap, volume, and percentage changes
-- **News Aggregation & Analysis**: Curated crypto news with AI-generated sentiment analysis
-- **Market Intelligence**: Get detailed analysis on trends, price movements, and investment opportunities
-- **User-Friendly Interface**: Modern, responsive UI built with Next.js, TypeScript, and Tailwind CSS
-- **Secure Wallet Connection**: Easy wallet integration with RainbowKit
-- **Floating Chatbot**: Access AI assistance from any page in the application
-- **Smart Contract Studio**: Create, edit, and deploy smart contracts directly from the browser
-- **Live Contract Editing**: Edit contract templates with real-time compilation and automatic deployment
-- **Multi-Network Support**: Deploy contracts to Sonic Testnet or Mainnet
-- **AI Contract Assistant**: Get AI help with smart contract development and troubleshooting
-- **Contract Verification**: Automatically verify deployed contracts on Sonic blockchain explorer
+- **Cross-Chain Integration**: 
+  - Support for major networks (Ethereum, BSC, Solana)
+  - Atomic swap protocols
+  - Bridge security mechanisms
+  - Gas optimization algorithms
+
+- **Token Operations**:
+  - Multi-chain token transfers
+  - Token swap interface
+  - Transaction tracking
+  - Portfolio management
+
+- **Market Intelligence**: 
+  - Real-time price tracking
+  - Technical analysis indicators
+  - Volume and liquidity metrics
+  - Historical data analysis
+
+- **AI-Powered Tools**:
+  - Smart contract generation
+  - Market trend analysis
+  - Risk assessment
+  - Trading suggestions
+
+- **Development Tools**:
+  - Contract template library
+  - Security audit tools
+  - Documentation generator
+  - Testing framework
+
+- **User Experience**:
+  - Modern, responsive UI
+  - Wallet integration
+  - Transaction monitoring
+  - Cross-chain bridge interface
 
 ## 🏗️ Architecture
 
-Quasar follows a modern web application architecture with several key components:
+Quasar follows a modern cross-chain architecture with several key components:
 
 ### Frontend
 - **Next.js App Router**: For server-side rendering and optimized page loading
@@ -37,23 +79,31 @@ Quasar follows a modern web application architecture with several key components
 - **TailwindCSS**: Utility-first CSS framework for responsive design
 - **Framer Motion**: For smooth animations and transitions
 
+### Cross-Chain Infrastructure
+- **Bridge Protocols**: Secure cross-chain communication
+- **Atomic Swap Engine**: Trustless token exchanges
+- **Multi-Chain Indexer**: Real-time blockchain data aggregation
+- **Gas Optimization Layer**: Smart transaction routing
+
 ### Blockchain Integration
-- **RainbowKit/wagmi**: For wallet connection and blockchain interactions
-- **Ethers.js**: For Ethereum-compatible blockchain communication
-- **Sonic Blockchain**: EVM-compatible chain for fast, low-cost transactions
+- **RainbowKit/wagmi**: For multi-wallet connection
+- **Ethers.js**: For EVM-compatible chain communication
+- **Sonic Blockchain**: Primary chain for fast, low-cost transactions
+- **Bridge Contracts**: Cross-chain smart contracts
 
 ### AI & Data Processing
-- **OpenAI API**: Powers the AI assistant and sentiment analysis
-- **LiveCoinWatch API**: For real-time cryptocurrency market data
-- **Reddit API**: For community sentiment analysis
-- **News Aggregation**: RSS feeds from major crypto news sources
+- **OpenAI API**: Powers contract generation and market analysis
+- **Market Data APIs**: Real-time cryptocurrency market data
+- **Technical Analysis Engine**: Trading indicators and signals
+- **Risk Assessment Module**: AI-powered risk analysis
 
 ### Data Flow
-1. Market data is fetched from LiveCoinWatch API
-2. News is aggregated from various crypto news sources
-3. Reddit posts are analyzed for community sentiment
-4. User queries are processed by the AI assistant
-5. Blockchain transactions are handled via Sonic Blockchain
+1. User initiates cross-chain transaction
+2. Bridge protocols verify and process the transfer
+3. Market data is aggregated from multiple chains
+4. AI analyzes market conditions and generates insights
+5. Smart contracts are automatically generated and verified
+6. Transactions are optimized and executed
 
 ## 🔗 Sonic Blockchain Details
 
